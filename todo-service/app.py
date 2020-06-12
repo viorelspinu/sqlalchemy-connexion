@@ -31,9 +31,9 @@ def new():
 
 connexion_app = connexion.App(__name__, specification_dir='./')
 app = connexion_app.app
-connexion_app.add_api('swagger.yml')
+connexion_app.add_api('api.yml')
 CORS(app)
-app.config.from_pyfile("hello.cfg")
+app.config.from_pyfile("app.cfg")
 db = SQLAlchemy(app)
 db.create_all()
 
