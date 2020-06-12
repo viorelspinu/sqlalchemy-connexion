@@ -1,0 +1,74 @@
+swagger: '2.0'
+info:
+  title: Task Service API
+  version: "0.1"
+  description: API to store and retrieve tasks
+consumes:
+  - application/json
+produces:
+  - application/json
+paths:
+  /task:
+    get:
+      tags: [task]
+      operationId: app.get_all
+      summary: Get all tasks
+      responses:
+        200:
+          description: Return tasks
+          schema:
+            type: object
+            properties:
+              pets:
+                type: array
+                items:
+                  $ref: '#/definitions/Task'
+    post:
+      tags: [task]
+      operationId: app.new
+      summary: Creates a task
+      parameters:
+        - name: task
+          in: body
+          schema:
+            $ref: '#/definitions/Task'
+      responses:
+        201:
+          description: New task created
+
+
+definitions:
+  Task:
+    type: object
+    required:
+      - title
+      - text
+    properties:
+      id:
+        type: number
+        description: Unique identifier
+        example: "123"
+        readOnly: true
+      title:
+        type: string
+        description: Task title
+        example: "do laundry"
+        minLength: 1
+        maxLength: 1024
+      text:
+        type: string
+        description: Task description
+        example: "when I get home, I should get laundry done"
+        minLength: 1
+      done:
+        type: boolean
+        description: Task complete status
+        example: "True"
+        readOnly: false
+      pub_date:
+        type: string
+        format: date-time
+        description: Creation time
+        example: "2015-07-07T15:49:51.230+02:00"
+        readOnly: true
+

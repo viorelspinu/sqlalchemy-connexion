@@ -33,7 +33,7 @@ class TodoList extends Component {
 
     async loadAPIData() {
         console.log("loading data");
-        const response = await fetch('http://localhost:5000/');
+        const response = await fetch('http://localhost:5000/task');
         const body = await response.json();
         if (response.status !== 200) throw Error(body.message);
         this.setState({ todos: body });
