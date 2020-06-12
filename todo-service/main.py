@@ -12,7 +12,6 @@ from sqlalchemy_serializer import SerializerMixin
 from flask_cors import CORS
 
 
-
 app = Flask(__name__)
 CORS(app)
 app.config.from_pyfile("hello.cfg")
@@ -46,10 +45,11 @@ def show_all():
 
 @app.route("/new", methods=["POST"])
 def new():
-    todo = Todo(request.form["title"], request.form["text"])
+    content = request.json
+    todo = Todo(content["title"], content["text"])
     db.session.add(todo)
     db.session.commit()
-    return jsonify(todo.to_dict())
+    return jsonify(todo.to_dict())    
 
 
 if __name__ == "__main__":
