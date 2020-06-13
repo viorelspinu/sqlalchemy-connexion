@@ -11,7 +11,7 @@ from flask import jsonify
 from sqlalchemy_serializer import SerializerMixin
 from flask_cors import CORS
 import connexion
-
+import os
 
 def get_all():
     todos = Todo.query.order_by(Todo.pub_date.desc()).all()
@@ -34,6 +34,7 @@ app = connexion_app.app
 connexion_app.add_api('api.yml')
 CORS(app)
 app.config.from_pyfile("app.cfg")
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('SQLALCHEMY_DATABASE_URI')
 db = SQLAlchemy(app)
 db.create_all()
 
@@ -54,4 +55,5 @@ class Todo(db.Model, SerializerMixin):
 
 
 if __name__ == "__main__":
-    app.run()
+    db.create_all()
+    app.run(host='0.0.0.0')

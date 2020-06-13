@@ -37,7 +37,7 @@ class TodoAdd extends Component {
 
     async handleSubmit() {
         console.log("SUBMIT");
-        const response = await fetch('http://localhost:5000/task', {
+        const response = await fetch('http://localhost:81/api/task', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
