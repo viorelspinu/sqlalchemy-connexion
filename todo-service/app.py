@@ -12,6 +12,7 @@ from sqlalchemy_serializer import SerializerMixin
 from flask_cors import CORS
 import connexion
 import os
+import sys
 
 def get_all():
     todos = Todo.query.order_by(Todo.pub_date.desc()).all()
@@ -28,13 +29,18 @@ def new():
     return jsonify(todo.to_dict())
 
 
-
 connexion_app = connexion.App(__name__, specification_dir='./')
 app = connexion_app.app
 connexion_app.add_api('api.yml')
 CORS(app)
 app.config.from_pyfile("app.cfg")
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('SQLALCHEMY_DATABASE_URI')
+DB_URI = os.environ.get('SQLALCHEMY_DATABASE_URI')
+if DB_URI is not None:
+    app.config['SQLALCHEMY_DATABASE_URI'] = DB_URI
+else:
+    print("You need to set SQLALCHEMY_DATABASE_URI !")
+    sys.exit()
+
 db = SQLAlchemy(app)
 db.create_all()
 
