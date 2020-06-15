@@ -14,6 +14,7 @@ import connexion
 import os
 import sys
 
+
 def get_all():
     todos = Todo.query.order_by(Todo.pub_date.desc()).all()
     print(todos)
@@ -27,6 +28,16 @@ def new():
     db.session.add(todo)
     db.session.commit()
     return jsonify(todo.to_dict())
+
+
+def filter():
+    content = request.json
+    titleLike = content["title"]
+    textLike = content["text"]
+    print(titleLike, textLike)
+    todos = Todo.query.filter(Todo.title.like("%" + titleLike + "%")).filter(Todo.text.like("%" + textLike + "%")).order_by(Todo.pub_date.desc())
+    todos_dict = [d.to_dict() for d in todos]
+    return jsonify(todos_dict)
 
 
 connexion_app = connexion.App(__name__, specification_dir='./')

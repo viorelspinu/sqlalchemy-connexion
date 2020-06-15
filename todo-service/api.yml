@@ -37,6 +37,22 @@ paths:
           description: New task created
 
 
+
+  /task/filter:
+    post:
+      tags: [task]
+      operationId: app.filter
+      summary: Filter tasks
+      parameters:
+        - name: task
+          in: body
+          schema:
+            $ref: '#/definitions/Filter'
+      responses:
+        201:
+          description: New filter created
+
+
 definitions:
   Task:
     type: object
@@ -72,3 +88,18 @@ definitions:
         example: "2015-07-07T15:49:51.230+02:00"
         readOnly: true
 
+
+  Filter:
+    type: object
+    properties:
+      title:
+        type: string
+        description: Task title
+        example: "do laundry"
+        minLength: 0
+        maxLength: 1024
+      text:
+        type: string
+        description: Task description
+        example: "when I get home, I should get laundry done"
+        minLength: 0

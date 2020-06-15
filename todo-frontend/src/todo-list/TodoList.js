@@ -3,11 +3,14 @@ import Container from 'react-bootstrap/Container';
 import Table from 'react-bootstrap/Table';
 import Button from 'react-bootstrap/Button';
 import TodoAdd from './TodoAdd'
+import TodoSearch from './TodoSearch'
 
 class TodoList extends Component {
     state = {
         todos: [],
         addNewVisible: Boolean,
+        titleLike: String,
+        textLike: String
     };
 
 
@@ -16,12 +19,15 @@ class TodoList extends Component {
 
         this.toogleAdd = this.toogleAdd.bind(this);
         this.loadAPIData = this.loadAPIData.bind(this);
+        this.doFilter = this.doFilter.bind(this);
+        this.setFilter = this.setFilter.bind(this);
+        this.state.titleLike = "";
+        this.state.textLike = "";
     }
 
     toogleAdd() {
         let newVisible = !this.state.addNewVisible;
         this.setState({ addNewVisible: newVisible });
-
     }
 
     componentDidMount() {
@@ -30,12 +36,29 @@ class TodoList extends Component {
 
     }
 
-
     async loadAPIData() {
         console.log("loading data");
         const response = await fetch(`${process.env.REACT_APP_API_URL}/task`);
         const body = await response.json();
         if (response.status !== 200) throw Error(body.message);
+        this.setState({ todos: body });
+    };
+
+    async setFilter(title, text) {
+        await this.setState({ titleLike: title, textLike: text });
+        await this.doFilter();
+    }
+
+    async doFilter() {
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/task/filter`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ title: this.state.titleLike, text: this.state.textLike }),
+        });
+        const body = await response.json();
+        console.log(body);
         this.setState({ todos: body });
     };
 
@@ -46,13 +69,25 @@ class TodoList extends Component {
             if (!this.state.addNewVisible) {
                 return <div>Add New Task</div>
             } else {
-                return <div>Hide</div>
+                return <div>Cancel</div>
             }
         }
 
         return (
             <Container className="p-3">
-                <div className="TodoList">
+
+                <Container className='mt-3'>
+                    <TodoSearch isVisible={!this.state.addNewVisible} className="" setFilter={this.setFilter}></TodoSearch>
+                </Container>
+
+                <Container className='mt-3'>
+                    <TodoAdd afterAdd={this.doFilter} isVisible={this.state.addNewVisible}></TodoAdd>
+                    <Button className="float-right mr-5" variant="link" onClick={this.toogleAdd}>
+                        {renderAddNewText()}
+                    </Button>
+                </Container>
+
+                <div className="TodoList mt-2">
                     <Table>
                         <thead>
                             <tr>{["ID", "Title", "Text", "Done"].map((h, i) => <th key={i}>{h}</th>)}</tr>
@@ -72,13 +107,8 @@ class TodoList extends Component {
                         </tbody>
                     </Table>
                 </div>
-                <TodoAdd afterAdd={this.loadAPIData} isVisible={this.state.addNewVisible}></TodoAdd>
 
-                <Container className='mt-3'>
-                    <Button variant="link" onClick={this.toogleAdd}>
-                        {renderAddNewText()}
-                    </Button>
-                </Container>
+
 
             </Container>
 
