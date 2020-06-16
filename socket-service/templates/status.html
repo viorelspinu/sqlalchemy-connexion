@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Device Status</title>
+</head>
+
+<body>
+    <h1>Devices</h1>
+
+    <div>
+        <div id="device1" style='width: 100px; height: 100px;border:1px solid gray;'>
+
+        </div>
+        <div id="device2" style='width: 100px; height: 100px;border:1px solid gray;'>
+
+        </div>
+        <div id="device3" style='width: 100px; height: 100px;border:1px solid gray;'>
+
+        </div>
+    </div>
+
+    <script>
+        var ws = new WebSocket("ws://localhost:8000/ws");  
+        ws.onmessage = function (event) {
+            console.log(event.data); 
+            let data = event.data.replace("__STATUS_CHANGE__", "");
+            let dataArr = data.split(":");
+            document.getElementById("device"+dataArr[0]).style.backgroundColor = dataArr[1];
+
+        };
+
+    </script>
+</body>
+
+</html>
