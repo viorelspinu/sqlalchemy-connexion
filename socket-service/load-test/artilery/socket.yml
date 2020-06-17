@@ -1,0 +1,14 @@
+config:
+  target: "ws://localhost:8000/ws"
+  phases:
+    - duration: 10
+      arrivalRate: 100
+
+scenarios:
+  - engine: "ws"
+    flow:
+      - loop:
+        - think: 1
+        count: 100
+
+      

@@ -21,14 +21,26 @@
     </div>
 
     <script>
-        var ws = new WebSocket("ws://localhost:8000/ws");  
+        var ws = new WebSocket("ws://localhost:8000/ws");
         ws.onmessage = function (event) {
-            console.log(event.data); 
+            console.log(event.data);
             let data = event.data.replace("__STATUS_CHANGE__", "");
             let dataArr = data.split(":");
-            document.getElementById("device"+dataArr[0]).style.backgroundColor = dataArr[1];
+            document.getElementById("device" + dataArr[0]).style.backgroundColor = dataArr[1];
 
         };
+
+        ws.onclose = function (event) {
+            console.log(event);
+            ws = new WebSocket("ws://localhost:8000/ws");
+            ws.onmessage = function (event) {
+                console.log(event.data);
+                let data = event.data.replace("__STATUS_CHANGE__", "");
+                let dataArr = data.split(":");
+                document.getElementById("device" + dataArr[0]).style.backgroundColor = dataArr[1];
+
+            };
+        }
 
     </script>
 </body>

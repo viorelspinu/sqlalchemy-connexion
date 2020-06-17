@@ -26,12 +26,16 @@ async def admin(request: Request):
 @app.get("/update")
 async def update(request: Request, id, color):
     print(id, color)
+    count = 0
     for w in connections:
         try:
             await w.send_text("__STATUS_CHANGE__" + id + ":" + color)
+            count = count + 1
         except WebSocketDisconnect:
+            print("removing on error sending")
             connections.remove(w)
     print(len(connections))
+    print("message has been sent to " + str(count) + " clients.")
     return templates.TemplateResponse("admin.html", {"request": request, "count": len(connections)})
 
 
@@ -43,5 +47,7 @@ async def websocket_endpoint(websocket: WebSocket):
         print(len(connections))
         while True:
             data = await websocket.receive_text()
+            print(data)
     except WebSocketDisconnect:
+        print("removing on disconnect")
         connections.remove(websocket)
