@@ -11,6 +11,8 @@ services:
       - ./environment-variables.env    
     build:
       context: ../todo-frontend/
+    depends_on:
+      - backend
     networks:
       - network1
 
@@ -21,10 +23,12 @@ services:
     restart: always      
     build:
       context: ../todo-service/
+    depends_on:
+      - db_server
     networks:
       - network1
 
-  db:
+  db_server:
     image: mysql
     container_name: db_server
     command: --default-authentication-plugin=mysql_native_password
