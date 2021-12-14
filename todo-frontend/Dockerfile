@@ -2,7 +2,7 @@
 FROM node:13.12.0-alpine as build
 WORKDIR /app
 #HACK:for reasons, below environment variable is not seen by React app build when injected from environment-variables.env
-ENV REACT_APP_API_URL http://pvpcounters.com/alchemy/api
+ENV REACT_APP_API_URL http://localhost:81/api
 ENV PATH /app/node_modules/.bin:$PATH
 COPY package.json ./
 COPY package-lock.json ./
@@ -13,6 +13,7 @@ RUN npm run build
 
 # production environment
 FROM nginx:stable-alpine
+RUN apk update && apk add bash
 COPY --from=build /app/build /usr/share/nginx/html
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 #EXPOSE 80
